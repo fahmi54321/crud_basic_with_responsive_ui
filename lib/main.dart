@@ -106,8 +106,13 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  bool _showChart = false;
+
   @override
   Widget build(BuildContext context) {
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     final appBar = AppBar(
       title: Text(
         'Crup Basic App',
@@ -122,22 +127,55 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
+    final txListWidget = Container(
+        height: (MediaQuery.of(context).size.height -
+                MediaQuery.of(context).padding.top /* status bar */) *
+            0.7,
+        child: TransactionList(_transactionList, _deleteTransaction));
+
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
-                height: (MediaQuery.of(context).size.height -
-                        appBar.preferredSize.height - // appbar
-                        MediaQuery.of(context).padding.top /* status bar */) *
-                    0.3,
-                child: Chart(_recentTransactions)),
-            Container(
-                height: (MediaQuery.of(context).size.height -
-                        MediaQuery.of(context).padding.top /* status bar */) *
-                    0.7,
-                child: TransactionList(_transactionList, _deleteTransaction)),
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show Chart'),
+                  Switch(
+                      value: _showChart,
+                      onChanged: (value) {
+                        setState(() {
+                          _showChart = value;
+                        });
+                      }),
+                ],
+              ),
+
+
+            if (!isLandscape)
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height - // appbar
+                          MediaQuery.of(context).padding.top /* status bar */) *
+                      0.3,
+                  child: Chart(_recentTransactions)),
+            if (!isLandscape) txListWidget,
+
+
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height - // appbar
+                              MediaQuery.of(context)
+                                  .padding
+                                  .top /* status bar */) *
+                          0.7,
+                      child: Chart(_recentTransactions))
+                  : txListWidget
+
           ],
         ),
       ),

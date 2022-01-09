@@ -8,26 +8,27 @@ class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
   final Function deleteTrans;
 
-  TransactionList(this.transactions,this.deleteTrans);
+  TransactionList(this.transactions, this.deleteTrans);
 
   @override
   Widget build(BuildContext context) {
     return transactions.isEmpty
-        ? Column(
-            children: [
-              Text(
-                'No transactions added yet',
-                style: Theme.of(context).textTheme.headline1,
-              ),
-              Container(
-                width: 100,
-                height: 100,
-                child: Image.asset(
-                  'assets/images/icon_nopic.png',
+        ? LayoutBuilder(builder: (ctx, constrains) {
+            return Column(
+              children: [
+                Text(
+                  'No transactions added yet',
+                  style: Theme.of(context).textTheme.headline1,
                 ),
-              ),
-            ],
-          )
+                Container(
+                  height: constrains.maxHeight * 0.6,
+                  child: Image.asset(
+                    'assets/images/icon_nopic.png',
+                  ),
+                ),
+              ],
+            );
+          })
         : ListView.builder(
             itemCount: transactions.length,
             itemBuilder: (ctx, index) {
